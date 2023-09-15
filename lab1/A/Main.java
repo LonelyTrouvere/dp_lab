@@ -11,7 +11,7 @@ class MyThread extends Thread {
     public MyThread(JSlider slider, int increment) {
         this.slider = slider;
         this.increment = increment;
-        setPriority(1);
+        setPriority(MIN_PRIORITY);
     }
 
     @Override
@@ -19,11 +19,11 @@ class MyThread extends Thread {
         while(!interrupted()){
             synchronized (slider){
                 ++count;
-                if(count > brick){
+                if(count > brick && slider.getValue() > 10 && slider.getValue() < 90){
                     slider.setValue((int)slider.getValue() + increment);
                     count = 0;
+                }
             }
-        }
         }
     }
 }
@@ -74,8 +74,8 @@ public class Main {
         frame.add(spinner2);
 
         // Threads
-        MyThread thread1 = new MyThread(slider, +1);
-        MyThread thread2 = new MyThread(slider, -1);
+        MyThread thread1 = new MyThread(slider, -1);
+        MyThread thread2 = new MyThread(slider, 1);
 
         // Button start
         btn.addActionListener(e -> {
