@@ -78,7 +78,7 @@ class BeeThread implements Runnable{
                 }
                 sem.semaphore++;
             } else {
-                System.out.println("Its sto dangerous to make honey");
+                System.out.println("Its to dangerous to make honey");
                 Thread.sleep(2000);
             }
         }
