@@ -5,6 +5,10 @@ public class Main {
     public static void main(String[] args) {
         FileSystem fs = new FileSystem();
 
-        fs.createFile("lab2", "rb", 128, "id_ffde648d-9efd-4350-ad60-5c2ec303dd32");
+        fs.deleteFolder("id_ffde648d-9efd-4350-ad60-5c2ec303dd32");
+        var k = fs.getFiles();
+
+        for (int i=0; i<k.size(); i++)
+            System.out.println(k.get(i).toString());
     }
 }

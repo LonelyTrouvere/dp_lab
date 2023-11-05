@@ -87,4 +87,37 @@ public class FileSystem {
 
         return res;
     }
+
+    public void createFolder(String name){
+        Folder newFolder = new Folder("id_"+UUID.randomUUID(), name);
+        dom.createFolder(newFolder);
+    }
+
+    public void deleteFile(String id){
+        for (int i=0; i<fileList.size(); i++){
+            var file = fileList.get(i);
+            if (id.equals(file.id)){
+                fileList.remove(file);
+                dom.deleteFile(file);
+                break;
+            }
+        }
+    }
+
+    public void deleteFolder(String id){
+        ArrayList<MyFile> files = getFilesFromFolder(id);
+        for(int i=0; i<files.size(); i++){
+            fileList.remove(files.get(i));
+            dom.deleteFile(files.get(i));
+        }
+
+        for(int i=0; i<folderList.size(); i++){
+            var folder = folderList.get(i);
+            if (id.equals(folder.id)){
+                folderList.remove(folder);
+                dom.deleteFolder(folder);
+                break;
+            }
+        }
+    }
 }

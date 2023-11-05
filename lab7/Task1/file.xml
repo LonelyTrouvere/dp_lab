@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="WINDOWS-1251" standalone="no"?><!DOCTYPE FileSystem SYSTEM "schema.dtd">
 <FileSystem>
-    <Folder id="id_ffde648d-9efd-4350-ad60-5c2ec303dd32" name="projects">
-        <MyFile id="id_75d12be5-873e-4bb9-b8ca-3ba98577ba80" name="lab1" size="12" type="py"/>
-        <MyFile id="id_cf64f962-fc72-4576-ad10-1cc7aac5a0f4" name="server" size="15" type="js"/>
-        <MyFile id="id_137d449f-f1f8-4fa1-8038-501616760e16" name="lab2" size="128" type="rb"/>
-    </Folder>
+    
     <Folder id="id_2afa2608-a1da-4bb5-9919-424100a3b4a1" name="pictures">
         <MyFile id="id_57ea6e97-81f8-4126-b9d9-2611ba86df9a" name="cutecat" size="125" type="jpeg"/>
         <MyFile id="id_f66b70b1-8540-4dec-8384-e3c280bc40e7" name="drawing" size="34" type="png"/>

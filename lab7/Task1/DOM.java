@@ -108,6 +108,34 @@ public class DOM {
         return 0;
     }
 
+    public void createFolder(Folder newFolder){
+        var root = (Element)document.getElementsByTagName("FileSystem").item(0);
+        Element folder = document.createElement("Folder");
+        folder.setAttribute("id", newFolder.id);
+        folder.setAttribute("name", newFolder.name);
+        root.appendChild(folder);
+        saveXml();
+    }
+
+    public void deleteFile(MyFile file){
+        var parent = document.getElementById(file.parentId);
+        var child = document.getElementById(file.id);
+        if (parent == null || child == null){
+            return;
+        }
+        parent.removeChild(child);
+        saveXml();
+    }
+
+    public void deleteFolder(Folder folder){
+        var parent = (Element)document.getElementsByTagName("FileSystem").item(0);
+        var child = document.getElementById(folder.id);
+        if (child == null)
+            return;
+        parent.removeChild(child);
+        saveXml();
+    }
+
     public void saveXml(){
         Source domSource = new DOMSource(document);
         Result fileResult = new StreamResult(new File("C:\\Users\\spery\\dp_lab\\lab7\\Task1\\file.xml"));
