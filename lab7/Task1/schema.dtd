@@ -1,0 +1,9 @@
+<!ELEMENT FileSystem (Folder*)>
+<!ELEMENT Folder (MyFile*)>
+<!ATTLIST Folder id ID #REQUIRED>
+<!ATTLIST Folder name CDATA #REQUIRED>
+<!ELEMENT MyFile (#PCDATA)>
+<!ATTLIST MyFile id ID #REQUIRED>
+<!ATTLIST MyFile name CDATA #REQUIRED>
+<!ATTLIST MyFile type CDATA #REQUIRED>
+<!ATTLIST MyFile size CDATA #REQUIRED>

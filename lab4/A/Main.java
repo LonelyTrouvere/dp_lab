@@ -8,9 +8,9 @@ public class Main {
     static public AtomicBoolean writeLock = new AtomicBoolean(false);
     public static void main(String[] args) {
          
-        //new Thread(new Writer(readLock, writeLock)).start();
-        //new Thread(new NameReader(readLock, writeLock)).start();
-       // new Thread(new PhoneReader(readLock, writeLock)).start();
+       new Thread(new Writer(readLock, writeLock)).start();
+       new Thread(new NameReader(readLock, writeLock)).start();
+       new Thread(new PhoneReader(readLock, writeLock)).start();
        new Thread(new Deleter(readLock, writeLock)).start();
 
     }
