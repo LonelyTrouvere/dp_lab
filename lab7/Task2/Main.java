@@ -1,7 +1,6 @@
 package lab7.Task2;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class Main {
     
