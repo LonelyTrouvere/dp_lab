@@ -1,32 +1,63 @@
-package lab8.Task2;
+package lab8.Task3;
 
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Scanner;
-
-import lab8.Task2.Schema.Folder;
-import lab8.Task2.Schema.MyFile;
+import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+import lab8.Task2.Schema.Folder;
+import lab8.Task2.Schema.MyFile;
+import lab8.Task3.Schema.UpdateFile;
+
+import static lab8.Task3.Util.serializeObject;
 
 public class Client {
     static Scanner scanner;
-    static Boolean stoped;
-    static String status;
-    public static void main(String[] args) {
-        try{
-            Registry registry = LocateRegistry.getRegistry(8080);
-            RMIInterface rmi = (RMIInterface)registry.lookup("dao");
+    static boolean stoped;
+    public static void main(String[] args){
+        ConnectionFactory connectionFactory = new ConnectionFactory();
 
-            stoped = false;
+        try(Connection rabbitmqConnection= connectionFactory.newConnection()){
+            Channel channel = rabbitmqConnection.createChannel();
+
+            channel.queueDeclare("server-queue",false,false,false,null);
+            channel.queueDeclare("client-queue",false,false,false,null);
             scanner = new Scanner(System.in);
+            stoped = false;
+            try {
+                while (true) {
+                    channel.basicConsume("client-queue", true, (consumerTag, delivery) -> {
+                        String receivedData = new String(delivery.getBody());
+                        System.out.println("Received from server:" + receivedData);
+                    }, consumerTag -> {
+                    });
 
-            while (!stoped){
-                System.out.println("Enter operation");
+                    Data dataObjectInput = getInput();
+                    if (stoped){
+                        break;
+                    }
+                    channel.basicPublish("", "server-queue", null, serializeObject(dataObjectInput));
+
+                    System.out.println("Message has been sent to server");
+                    Thread.sleep(10);
+                }
+
+            }
+            catch (InterruptedException e){
+                e.printStackTrace();
+            }
+            channel.close();
+        }
+        catch (IOException e){ e.printStackTrace(); }
+        catch (TimeoutException e) { e.printStackTrace(); } 
+    }
+    public static Data getInput(){
+        int x;
+        while(true){
+            System.out.println("Enter operation");
                 System.out.println("1. Create file");
                 System.out.println("2. Create folder");
                 System.out.println("3. Read all folders");
@@ -39,9 +70,9 @@ public class Client {
                 System.out.println("10. Delete folder");
                 System.out.println("11. Delete file");
                 System.out.println("0. Exit");
-                int x = Integer.parseInt(scanner.nextLine());
-
-                switch (x) {
+            x = Integer.parseInt(scanner.nextLine());
+            try{
+                switch (x){
                     case 1:
                         System.out.println("Enter folder id");
                         String folderId = scanner.nextLine();
@@ -52,87 +83,58 @@ public class Client {
                         System.out.println("Enter file size");
                         int size = Integer.parseInt(scanner.nextLine());
 
-                        status = rmi.createFile(new MyFile(fileName, size, type, folderId));
-                        System.out.println(status);
-                        break;
+                        return new Data(x, new MyFile(fileName, size, type, folderId));
                     case 2: 
                         System.out.println("Enter folder name");
                         String folderName = scanner.nextLine();
 
-                        status = rmi.createFolder(new Folder(folderName));
-                        System.out.println(status);
-                        break;
+                        return new Data(x, new Folder(folderName));
                     case 3:
-                        ArrayList<Folder> folderList = rmi.getAllFolders();
-                        for(Folder f : folderList){
-                            System.out.println(f);
-                        }
-                        break;
                     case 4:
-                        ArrayList<MyFile> fileList = rmi.getAllFiles();
-                        for(MyFile f : fileList){
-                            System.out.println(f);
-                        }
-                        break;
+                        return new Data(x, null);
                     case 5:
                         System.out.println("Enter folder id");
                         String id = scanner.nextLine();
-                        var output = rmi.getFilesFromFolder(id);
-                            for(MyFile f : output){
-                                System.out.println(f);
-                            }
-                        break;
+                        return new Data(x, id);
                     case 6:
                         System.out.println("Enter Folder id");
                         String FolderUpdate = scanner.nextLine();
                         System.out.println("Enter new name");
                         String newName = scanner.nextLine();
-                        status = rmi.updateFolder(new Folder(FolderUpdate, newName));
-                        System.out.println(status);
-                        break;
+                        return new Data(x, new Folder(FolderUpdate, newName));
                     case 7:
                         System.out.println("Enter file id");
                         String fileNameU = scanner.nextLine();
                         System.out.println("Enter new name");
                         String newNameU = scanner.nextLine();
-                        status = rmi.updateFileName(fileNameU, newNameU);
-                        break;
+                        return new Data(x, new UpdateFile(fileNameU, newNameU, false));
                     case 8:
                         System.out.println("Enter file id");
                         String fileType = scanner.nextLine();
                         System.out.println("Enter new type");
                         String newType = scanner.nextLine();
-                        status = rmi.updateFileType(fileType, newType);
-                        break;
+                        return new Data(x, new UpdateFile(fileType, newType, true));
                     case 9:
                         System.out.println("Enter file id");
                         String fileSize = scanner.nextLine();
                         System.out.println("Enter new size");
                         int newSize = Integer.parseInt(scanner.nextLine());
-                        status = rmi.updateFileSize(fileSize, newSize);
-                        break;
+                        return new Data(x, new UpdateFile(fileSize, newSize));
                     case 10:
                         System.out.println("Enter folder id");
                         String deleteFolder = scanner.nextLine();
-                        status = rmi.deleteFolder(deleteFolder);
-                        System.out.println(status);
-                        break;
+                        return new Data(x, deleteFolder);
                     case 11:
                         System.out.println("Enter file id");
                         String deleteFile = scanner.nextLine();
-                        status = rmi.deleteFile(deleteFile);
-                        System.out.println(status);  
-                        break;
+                        return new Data(x, deleteFile);
                     case 0:
                         System.out.println("Exinting...");
                         stoped = true;
-                    default:
-                        break;
                 }
+            }catch (Exception e){
+                System.out.println("Error happened:"+e.getMessage());
             }
-
-            scanner.close();
-
-        } catch(Exception e) {e.printStackTrace();}
+        }
     }
 }

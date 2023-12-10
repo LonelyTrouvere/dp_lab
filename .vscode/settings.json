@@ -1,5 +1,7 @@
 {
     "java.project.referencedLibraries": [
-      "C:\\jar\\mysql-connector-j-8.2.0.jar"
+      "C:\\jar\\mysql-connector-j-8.2.0.jar",
+      "C:\\jar\\amqp-client-5.20.0.jar",
+      "C:\\jar\\slf4j.jar"
     ]
 }
