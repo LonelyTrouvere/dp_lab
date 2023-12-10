@@ -1,4 +1,4 @@
-package lab7.Task2;
+package lab8.Task1;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,8 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.UUID;
 
-public class DB {
+import lab8.Task1.Schema.Folder;
+import lab8.Task1.Schema.MyFile;
+
+public class DAO {
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/lab7";
     private static final String USER = "root";
     private static final String PASSWORD = "123456";
@@ -22,24 +26,12 @@ public class DB {
         }
     }
 
-    public DB(){
+    public DAO(){
         try{
             this.connection = DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
         }
         catch (SQLException e){
             e.printStackTrace();
-        }
-    }
-
-    public void createFolder(Folder folder){
-        try{
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO `folders` (id, name)  VALUES(?,?) ");
-            ps.setString(1, folder.id);
-            ps.setString(2, folder.name);
-            ps.executeUpdate();
-        }
-        catch(SQLException e){
-            throw new RuntimeException(e);
         }
     }
 
@@ -52,44 +44,61 @@ public class DB {
         }
     }
 
-    public void createFile(MyFile file){
+    public String createFolder(Folder folder){
+        try{
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO `folders` (id, name)  VALUES(?,?) ");
+            ps.setString(1, UUID.randomUUID().toString());
+            ps.setString(2, folder.name);
+            ps.executeUpdate();
+            return "Success";
+        }
+        catch(SQLException e){
+            return e.toString();
+        }
+    }
+
+    public String createFile(MyFile file){
         try{
             PreparedStatement ps = connection.prepareStatement("INSERT INTO `files` (id, name, size, type, folder_id) VALUES (?, ?, ?, ?, ?)");
-            ps.setString(1, file.id);
+            ps.setString(1, UUID.randomUUID().toString());
             ps.setString(2, file.name);
             ps.setInt(3, file.size);
             ps.setString(4, file.type);
             ps.setString(5, file.parentId);
             ps.executeUpdate();
-        } catch (SQLException e) {e.printStackTrace();}
+            return "Success";
+        } catch (SQLException e) {return e.toString();}
     }
 
-    public void deleteFolder(String id){
+    public String deleteFolder(String id){
         try{
             PreparedStatement ps = connection.prepareStatement("DELETE FROM `folders` WHERE id=?");
             ps.setString(1, id);
             ps.executeUpdate();
-        } catch(SQLException e) {e.printStackTrace();}
+            return "Success";
+        } catch(SQLException e) {return e.toString();}
     }
 
-    public void deleteFile(String id){
+    public String deleteFile(String id){
         try{
             PreparedStatement ps = connection.prepareStatement("DELETE FROM `files` WHERE id=?");
             ps.setString(1, id);
             ps.executeUpdate();
-        } catch(SQLException e) {e.printStackTrace();}
+            return "Success";
+        } catch(SQLException e) {return e.toString();}
     }
 
-    public void updateFolder(Folder folder){
+    public String updateFolder(Folder folder){
         try{
             PreparedStatement ps = connection.prepareStatement("UPDATE `folders` SET name=? WHERE id=?");
             ps.setString(1, folder.name);
             ps.setString(2, folder.id);
             ps.executeUpdate();
-        } catch(SQLException e) {e.printStackTrace();}
+            return "Success";
+        } catch(SQLException e) {return e.toString();}
     }
 
-    private void fileUpdater(MyFile file){
+    private String fileUpdater(MyFile file){
         try{
             PreparedStatement ps = connection.prepareStatement("UPDATE `files` SET name=?, size=?, type=? WHERE id=?");
             ps.setString(1, file.name);
@@ -97,25 +106,26 @@ public class DB {
             ps.setString(3, file.type);
             ps.setString(4, file.id);
             ps.executeUpdate();
-        } catch(SQLException e) {e.printStackTrace();}
+            return "Success";
+        } catch(SQLException e) {return e.toString();}
     }
 
-    public void updateFileName(String id, String newVal){
+    public String updateFileName(String id, String newVal){
         MyFile fileToUpdate = this.getFile(id);
         fileToUpdate.name = newVal;
-        this.fileUpdater(fileToUpdate);
+        return this.fileUpdater(fileToUpdate);
     }
 
-    public void updateFileType(String id, String newVal){
+    public String updateFileType(String id, String newVal){
         MyFile fileToUpdate = this.getFile(id);
         fileToUpdate.type = newVal;
-        this.fileUpdater(fileToUpdate);
+        return this.fileUpdater(fileToUpdate);
     }   
     
-    public void updateFileSize(String id, int newVal){
+    public String updateFileSize(String id, int newVal){
         MyFile fileToUpdate = this.getFile(id);
         fileToUpdate.size = newVal;
-        this.fileUpdater(fileToUpdate);
+        return this.fileUpdater(fileToUpdate);
     } 
 
     public Folder getFolder(String id){
@@ -168,7 +178,7 @@ public class DB {
         return files;
     }
 
-    public ArrayList<MyFile> getFilesFromFolder(String id){
+    public ArrayList<MyFile> getFilesFromFolder(String id) throws SQLException{
         ArrayList<MyFile> files = new ArrayList<>();
         try{
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM `files` WHERE folder_id=?");
@@ -177,7 +187,7 @@ public class DB {
 
             while(res.next())
                 files.add(new MyFile(res.getString("id"), res.getString("name"), res.getInt("size"), res.getString("type"), res.getString("folder_id")));
-        } catch(SQLException e) {e.printStackTrace();}
+        } catch(SQLException e) { throw e; }
         return files;
     }
 }

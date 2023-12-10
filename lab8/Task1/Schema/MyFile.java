@@ -1,6 +1,8 @@
-package lab7.Task2;
+package lab8.Task1.Schema;
 
-public class MyFile {
+import java.io.Serializable;
+
+public class MyFile implements Serializable {
     public String id;
     public String name; 
     public String type;
