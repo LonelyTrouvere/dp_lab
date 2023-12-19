@@ -8,10 +8,6 @@ import java.util.Scanner;
 import lab8.Task2.Schema.Folder;
 import lab8.Task2.Schema.MyFile;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-
 
 public class Client {
     static Scanner scanner;
