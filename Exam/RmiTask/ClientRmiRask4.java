@@ -58,6 +58,7 @@ public class ClientRmiRask4 {
                         int deleteId = Integer.valueOf(scanner.nextLine());
 
                         rmi.delete(deleteId);
+                        break;
                     case 0:
                         System.out.println("Exinting...");
                         stoped = true;
