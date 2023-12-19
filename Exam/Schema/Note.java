@@ -1,8 +1,9 @@
 package Exam.Schema;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Note {
+public class Note implements Serializable {
     private int priority;
     private String type;
     private Date timestamp;
@@ -44,5 +45,9 @@ public class Note {
     }
     public void setTimestamp(Date d){
         this.timestamp = d;
+    }
+
+    public String toString(){
+        return "Note: " + this.id + "\nPriority: "+this.priority+"\nType: "+this.type+"\nTimestamp: "+this.timestamp.toString();
     }
 }

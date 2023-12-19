@@ -36,9 +36,9 @@ public class ServerScoketTask4 {
         }
 
         try{
+            Manager manager = new Manager();
             while (!stoped){
                 int x = (Integer)in.readObject();
-                Manager manager = new Manager();
                 switch (x) {
                     case 1:
                         Note note = (Note)in.readObject();
