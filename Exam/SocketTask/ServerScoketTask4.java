@@ -5,12 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
-import java.util.ArrayList;
 
 import Exam.Schema.Note;
-import lab8.Task1.Schema.Folder;
-import lab8.Task1.Schema.MyFile;
 
 public class ServerScoketTask4 {
     static ObjectInputStream in;
